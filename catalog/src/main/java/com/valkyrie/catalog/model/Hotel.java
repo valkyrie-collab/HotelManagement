@@ -5,7 +5,7 @@ import java.util.List;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
+// import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
@@ -13,7 +13,7 @@ import jakarta.persistence.Table;
 @Table(name = "name")
 public class Hotel {
     @Id
-    private String hotelId;
+    private String id;
     private String name;
     private String brand;
     @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL)
@@ -24,13 +24,17 @@ public class Hotel {
     private int checkIn;
     private int checkOut;
     @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL)
-    private List<Image> images;
+    private List<HotelImage> images;
+    @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL)
+    private List<Rate> rates;
+    @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL)
+    private List<Room> rooms;
 
-    public String getHotelId() {
-        return hotelId;
+    public String getId() {
+        return id;
     }
-    public Hotel setHotelId(String hotelId) {
-        this.hotelId = hotelId;
+    public Hotel setId(String id) {
+        this.id = id;
         return this;
     }
 
@@ -98,17 +102,33 @@ public class Hotel {
         return this;
     }
 
-    public List<Image> getImages() {
+    public List<HotelImage> getImages() {
         return images;
     }
-    public Hotel setImages(List<Image> images) {
+    public Hotel setImages(List<HotelImage> images) {
         this.images = images;
+        return this;
+    }
+
+    public List<Rate> getRates() {
+        return rates;
+    }
+    public Hotel setRates(List<Rate> rates) {
+        this.rates = rates;
+        return this;
+    }
+    
+    public List<Room> getRooms() {
+        return rooms;
+    }
+    public Hotel setRooms(List<Room> rooms) {
+        this.rooms = rooms;
         return this;
     }
 
     @Override
     public String toString() {
-        return "Hotel [hotelId=" + hotelId + ", name=" + name + ", brand=" + brand + ", description=" + description
+        return "Hotel [hotelId=" + id + ", name=" + name + ", brand=" + brand + ", description=" + description
                 + ", address=" + address + ", contact=" + contact + ", checkIn=" + checkIn + ", checkOut=" + checkOut
                 + "]";
     }
