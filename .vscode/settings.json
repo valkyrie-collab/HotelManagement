@@ -1,4 +1,39 @@
 {
     "java.compile.nullAnalysis.mode": "automatic",
-    "java.configuration.updateBuildConfiguration": "automatic"
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "sqltools.connections": [
+        {
+            "ssh": "Disabled",
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "CatalogDatabase",
+            "database": "catalog",
+            "username": "postgres",
+            "password": "postgres30082004"
+        },
+        {
+            "ssh": "Disabled",
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "RatingDatabase",
+            "database": "rate",
+            "username": "postgres",
+            "password": "postgres30082004"
+        },
+        {
+            "ssh": "Disabled",
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "ReservationDatabase",
+            "database": "reservation",
+            "username": "postgres",
+            "password": "postgres30082004"
+        }
+    ]
 }

@@ -10,7 +10,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "name")
+@Table(name = "hotel")
 public class Hotel {
     @Id
     private String id;

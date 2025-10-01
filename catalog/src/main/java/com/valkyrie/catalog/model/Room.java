@@ -4,6 +4,8 @@ import java.util.List;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -14,24 +16,34 @@ import jakarta.persistence.Table;
 @Table(name = "room")
 public class Room {
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+    private int roomNumber;
     private String name;
     private String description;
     private int adultNo;
     private int childrenNo;
     private int price;
-    private int Beds;
+    private int beds;
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
     private List<RoomImage> images;
     @ManyToOne
     @JoinColumn(name = "hotel_id", referencedColumnName = "id")
     private Hotel hotel;
 
-    public String getId() {
+    public int getId() {
         return id;
     }
-    public Room setId(String id) {
+    public Room setId(int id) {
         this.id = id;
+        return this;
+    }
+
+    public int getRoomNumber() {
+        return roomNumber;
+    }
+    public Room setRoomNumber(int roomNumber) {
+        this.roomNumber = roomNumber;
         return this;
     }
     
@@ -90,10 +102,10 @@ public class Room {
     }
     
     public int getBeds() {
-        return Beds;
+        return beds;
     }
     public Room setBeds(int beds) {
-        Beds = beds;
+        this.beds = beds;
         return this;
     }
 

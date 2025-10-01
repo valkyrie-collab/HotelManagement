@@ -1,6 +1,7 @@
 package com.valkyrie.catalog.config;
 
 import java.security.Key;
+import java.util.List;
 import java.util.function.Function;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -29,4 +30,8 @@ public class TokenConfig {
 
     public String getUsername(String token) {return claims(token, Claims::getSubject);}
     
+    public List<String> getRoles(String token) {
+        List<?> roles = claims(token, claims -> claims.get("roles", List.class));
+        return roles == null ? null : roles.stream().map(Object::toString).toList();
+    }
 }

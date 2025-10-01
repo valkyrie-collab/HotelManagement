@@ -3,7 +3,8 @@ package com.valkyrie.catalog.model;
 import java.util.List;
 
 public class RoomDTO {
-    private String id;
+    private int id;
+    private int roomNumber;
     private String hotelId;
     private String name;
     private String description;
@@ -20,11 +21,19 @@ public class RoomDTO {
         return this;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
-    public RoomDTO setId(String id) {
+    public RoomDTO setId(int id) {
         this.id = id;
+        return this;
+    }
+
+    public int getRoomNumber() {
+        return roomNumber;
+    }
+    public RoomDTO setRoomNumber(int roomNumber) {
+        this.roomNumber = roomNumber;
         return this;
     }
     
