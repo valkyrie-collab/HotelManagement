@@ -1,5 +1,7 @@
 package com.valkyrie.catalog.model;
 
+import java.util.List;
+
 public class RoomDTO {
     private String id;
     private String hotelId;
@@ -9,6 +11,14 @@ public class RoomDTO {
     private int childrenNo;
     private int price;
     private int Beds;
+    private List<ImageDTO> imageDTOs;
+
+    public List<ImageDTO> getImageDTOs() {return imageDTOs;}
+
+    public RoomDTO setImageDTOs(List<ImageDTO> imageDTOs) {
+        this.imageDTOs = imageDTOs;
+        return this;
+    }
 
     public String getId() {
         return id;

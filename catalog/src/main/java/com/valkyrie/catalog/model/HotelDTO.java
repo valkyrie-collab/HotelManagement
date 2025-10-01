@@ -14,7 +14,6 @@ public class HotelDTO {
     private List<ImageDTO> imageDTOs;
     private List<RoomDTO> roomDTOs;
     private List<RateDTO> rateDTOs;
-    private List<StarRatingDTO> starRatingDTOs;
 
     public String getId() {
         return id;
@@ -37,14 +36,6 @@ public class HotelDTO {
     }
     public HotelDTO setBrand(String brand) {
         this.brand = brand;
-        return this;
-    }
-    
-    public List<StarRatingDTO> getStarRatingDTOs() {
-        return starRatingDTOs;
-    }
-    public HotelDTO setStarRatingDTOs(List<StarRatingDTO> starRatingDTOs) {
-        this.starRatingDTOs = starRatingDTOs;
         return this;
     }
     

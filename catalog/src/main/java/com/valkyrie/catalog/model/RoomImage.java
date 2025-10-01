@@ -1,12 +1,16 @@
 package com.valkyrie.catalog.model;
 
+import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
+@Entity
+@Table(name = "room_image")
 public class RoomImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,6 +22,13 @@ public class RoomImage {
     @ManyToOne
     @JoinColumn(name = "room_id", referencedColumnName = "id")
     private Room room;
+
+    public int getId() {return id;}
+
+    public RoomImage setId(int id) {
+        this.id = id;
+        return this;
+    }
 
     public String getName() {return name;}
 
@@ -33,16 +44,16 @@ public class RoomImage {
         return this;
     }
 
-    public byte[] getByte() {return data;}
+    public byte[] getData() {return data;}
 
-    public RoomImage setByte(byte[] data) {
+    public RoomImage setData(byte[] data) {
         this.data = data;
         return this;
     }
 
     public Room getRoom() {return room;}
 
-    public RoomImage setImage(Room room) {
+    public RoomImage setRoom(Room room) {
         this.room = room;
         return this;
     }

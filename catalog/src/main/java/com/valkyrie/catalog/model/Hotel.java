@@ -16,8 +16,6 @@ public class Hotel {
     private String id;
     private String name;
     private String brand;
-    @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL)
-    private List<StarRating> starRating;
     private String description;
     private String address;
     private long contact;
@@ -51,14 +49,6 @@ public class Hotel {
     }
     public Hotel setBrand(String brand) {
         this.brand = brand;
-        return this;
-    }
-
-    public List<StarRating> getStarRating() {
-        return starRating;
-    }
-    public Hotel setStarRating(List<StarRating> starRating) {
-        this.starRating = starRating;
         return this;
     }
 

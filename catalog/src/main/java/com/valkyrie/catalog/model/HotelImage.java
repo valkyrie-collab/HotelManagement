@@ -24,6 +24,13 @@ public class HotelImage {
     @JoinColumn(name = "hotel_id", referencedColumnName = "id")
     private Hotel hotel;
 
+    public int getId() {return id;}
+
+    public HotelImage setId(int id) {
+        this.id = id;
+        return this;
+    }
+
     public String getName() {return name;}
 
     public HotelImage setName(String name) {
@@ -38,9 +45,9 @@ public class HotelImage {
         return this;
     }
 
-    public byte[] getByte() {return data;}
+    public byte[] getData() {return data;}
 
-    public HotelImage setByte(byte[] data) {
+    public HotelImage setData(byte[] data) {
         this.data = data;
         return this;
     }
