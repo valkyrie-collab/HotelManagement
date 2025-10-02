@@ -122,7 +122,7 @@ public class CatalogService {
         ratingJsonString = doDecoding(ratingJsonString);
         List<String> roles = config.getRoles(token);
 
-        if (roles.getFirst().equals("ROLE_ADMIN")) {
+        if (roles.getFirst().equals("ROLE_USER")) {
             return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body("Not have right permission....");
         }
 
