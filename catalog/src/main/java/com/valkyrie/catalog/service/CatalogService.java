@@ -191,26 +191,12 @@ public class CatalogService {
         }
 
         for (Hotel hotel : hotels) {
-            List<HotelImage> images = catalogRepo.getHotelImages(hotel.getId());
-            List<ImageDTO> imageDTOs = new LinkedList<>();
-
-            if (!images.isEmpty()) {
-
-                for (HotelImage image : images) {
-                    imageDTOs.add(
-                        new ImageDTO().setData(image.getData())
-                            .setId(image.getId()).setName(image.getName())
-                            .setType(image.getType())
-                    );
-                }
-
-            }
 
             hotelDTOs.add(
                 new HotelDTO().setAddress(hotel.getAddress()).setBrand(hotel.getBrand())
                     .setCheckIn(hotel.getCheckIn()).setCheckOut(hotel.getCheckOut())
                     .setContact(hotel.getContact()).setDescription(hotel.getDescription())
-                    .setId(hotel.getId()).setImageDTOs(imageDTOs).setName(hotel.getName())
+                    .setId(hotel.getId()).setImageDTOs(null).setName(hotel.getName())
                     .setRateDTOs(null).setRoomDTOs(null)
             );
         }
@@ -313,6 +299,36 @@ public class CatalogService {
         }
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(hotelDTOs);
+
+    }
+
+    public ResponseEntity<HotelDTO> findHotelById(String id) {
+        List<HotelImage> images = catalogRepo.getHotelImages(doDecoding(id));
+        List<ImageDTO> imageDTOs = new LinkedList<>();
+
+        if (!images.isEmpty()) {
+
+            for (HotelImage image : images) {
+                imageDTOs.add(
+                    new ImageDTO().setData(image.getData())
+                        .setId(image.getId()).setName(image.getName())
+                        .setType(image.getType())
+                );
+            }
+
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+
+        Hotel hotel = catalogRepo.findHotelById(doDecoding(id));
+        
+        HotelDTO hotelDTO = new HotelDTO().setAddress(hotel.getAddress()).setBrand(hotel.getBrand())
+                    .setCheckIn(hotel.getCheckIn()).setCheckOut(hotel.getCheckOut())
+                    .setContact(hotel.getContact()).setDescription(hotel.getDescription())
+                    .setId(hotel.getId()).setName(hotel.getName()).setImageDTOs(imageDTOs)
+                    .setRateDTOs(null).setRoomDTOs(null);
+        
+        return ResponseEntity.status(HttpStatus.OK).body(hotelDTO);
 
     }
 

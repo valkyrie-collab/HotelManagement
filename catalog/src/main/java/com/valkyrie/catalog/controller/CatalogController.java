@@ -48,6 +48,11 @@ public class CatalogController {
         return service.getAllHotels(name);
     }
 
+    @GetMapping("/search-hotel-by-id")
+    public ResponseEntity<HotelDTO> findHotelsById(@RequestParam String id) {
+        return service.findHotelById(id);
+    }
+
     @GetMapping("/get-hotels")
     public ResponseEntity<List<HotelDTO>> getHotels() {return service.getAllHotel();}
 

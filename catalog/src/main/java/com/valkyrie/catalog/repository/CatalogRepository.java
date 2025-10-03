@@ -68,4 +68,7 @@ public interface CatalogRepository extends JpaRepository<Hotel, String> {
     @Query(value = "select * from hotel where lower(name) like :name", nativeQuery = true)
     List<Hotel> findHotelByName(@Param("name") String name);
 
+    @Query(value = "select * from hotel where id = :id", nativeQuery = true)
+    Hotel findHotelById(@Param("id") String id);
+
 }
