@@ -302,6 +302,7 @@ public class CatalogService {
 
     }
 
+    @Transactional
     public ResponseEntity<HotelDTO> findHotelById(String id) {
         List<HotelImage> images = catalogRepo.getHotelImages(doDecoding(id));
         List<ImageDTO> imageDTOs = new LinkedList<>();
