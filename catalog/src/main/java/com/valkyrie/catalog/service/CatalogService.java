@@ -291,4 +291,29 @@ public class CatalogService {
 
     }
 
+    public ResponseEntity<List<HotelDTO>> getAllHotels(String name) {
+        name = doDecoding(name);
+        List<Hotel> hotels = catalogRepo.findHotelByName(name.toLowerCase());
+        List<HotelDTO> hotelDTOs = new LinkedList<>();
+
+        if (hotels.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+
+        for (Hotel hotel : hotels) {
+
+            hotelDTOs.add(
+                new HotelDTO().setAddress(hotel.getAddress()).setBrand(hotel.getBrand())
+                    .setCheckIn(hotel.getCheckIn()).setCheckOut(hotel.getCheckOut())
+                    .setContact(hotel.getContact()).setDescription(hotel.getDescription())
+                    .setId(hotel.getId()).setName(hotel.getName())
+                    .setRateDTOs(null).setRoomDTOs(null)
+            );
+
+        }
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(hotelDTOs);
+
+    }
+
 }

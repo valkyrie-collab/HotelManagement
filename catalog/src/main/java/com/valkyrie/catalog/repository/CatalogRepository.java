@@ -65,4 +65,7 @@ public interface CatalogRepository extends JpaRepository<Hotel, String> {
     @Query(value = "delete from room_image where room_id = :roomId", nativeQuery = true)
     void deleteRoomImages(@Param("roomId") int roomId);
 
+    @Query(value = "select * from hotel where lower(name) like :name", nativeQuery = true)
+    List<Hotel> findHotelByName(@Param("name") String name);
+
 }

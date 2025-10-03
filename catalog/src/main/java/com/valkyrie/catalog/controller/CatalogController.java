@@ -43,6 +43,10 @@ public class CatalogController {
         @RequestParam String ratingJsonString) throws IOException {
             return service.saveRating(token, hotelId, ratingJsonString);
         }
+    @GetMapping("/search-hotels")
+    public ResponseEntity<List<HotelDTO> findHotels(@RequestParam String name) {
+        
+    }
 
     @GetMapping("/get-hotels")
     public ResponseEntity<List<HotelDTO>> getHotels() {return service.getAllHotel();}
