@@ -44,8 +44,8 @@ public class CatalogController {
             return service.saveRating(token, hotelId, ratingJsonString);
         }
     @GetMapping("/search-hotels")
-    public ResponseEntity<List<HotelDTO> findHotels(@RequestParam String name) {
-        
+    public ResponseEntity<List<HotelDTO>> findHotels(@RequestParam String name) {
+        return service.getAllHotels(name);
     }
 
     @GetMapping("/get-hotels")
