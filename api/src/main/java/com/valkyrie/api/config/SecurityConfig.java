@@ -39,7 +39,9 @@ public class SecurityConfig {
                     .csrf(c -> c.disable())
                     .authorizeHttpRequests(
                         a -> a.requestMatchers(
-                            "/user/sign-up", "/user/sign-in", "/catalog/get-hotels"
+                            "/user/sign-up", "/user/sign-in",
+                            "/catalog/get-hotels", "/catalog/search-hotels"
+
                         ).permitAll()
                         .requestMatchers(
                             "/user/sign-up", "/user/sign-in"
