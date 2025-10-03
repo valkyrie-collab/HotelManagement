@@ -1,5 +1,6 @@
 package com.valkyrie.catalog.model;
 
+import java.util.Date;
 import java.util.List;
 
 public class HotelDTO {
@@ -9,8 +10,8 @@ public class HotelDTO {
     private String description;
     private String address;
     private long contact;
-    private int checkIn;
-    private int checkOut;
+    private Date checkIn;
+    private Date checkOut;
     private List<ImageDTO> imageDTOs;
     private List<RoomDTO> roomDTOs;
     private List<RateDTO> rateDTOs;
@@ -63,18 +64,18 @@ public class HotelDTO {
         return this;
     }
     
-    public int getCheckIn() {
+    public Date getCheckIn() {
         return checkIn;
     }
-    public HotelDTO setCheckIn(int checkIn) {
+    public HotelDTO setCheckIn(Date checkIn) {
         this.checkIn = checkIn;
         return this;
     }
     
-    public int getCheckOut() {
+    public Date getCheckOut() {
         return checkOut;
     }
-    public HotelDTO setCheckOut(int checkOut) {
+    public HotelDTO setCheckOut(Date checkOut) {
         this.checkOut = checkOut;
         return this;
     }

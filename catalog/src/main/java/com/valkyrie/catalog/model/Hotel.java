@@ -1,5 +1,6 @@
 package com.valkyrie.catalog.model;
 
+import java.util.Date;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -19,8 +20,8 @@ public class Hotel {
     private String description;
     private String address;
     private long contact;
-    private int checkIn;
-    private int checkOut;
+    private Date checkIn;
+    private Date checkOut;
     @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL)
     private List<HotelImage> images;
     @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL)
@@ -76,18 +77,18 @@ public class Hotel {
         return this;
     }
 
-    public int getCheckIn() {
+    public Date getCheckIn() {
         return checkIn;
     }
-    public Hotel setCheckIn(int checkIn) {
+    public Hotel setCheckIn(Date checkIn) {
         this.checkIn = checkIn;
         return this;
     }
 
-    public int getCheckOut() {
+    public Date getCheckOut() {
         return checkOut;
     }
-    public Hotel setCheckOut(int checkOut) {
+    public Hotel setCheckOut(Date checkOut) {
         this.checkOut = checkOut;
         return this;
     }
