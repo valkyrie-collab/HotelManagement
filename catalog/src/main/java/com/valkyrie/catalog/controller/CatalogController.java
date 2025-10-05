@@ -61,6 +61,11 @@ public class CatalogController {
         return service.getRoomsByHotelId(hotelId);
     }
 
+    @GetMapping("/find-room")
+    public ResponseEntity<RoomDTO> getRoom(@RequestParam String hotelId, @RequestParam String roomNumber) {
+        return service.findRoomByNumberAndHotelId(hotelId, roomNumber);
+    }
+
     @DeleteMapping("/remove-hotel")
     public ResponseEntity<String> removeHotel(@RequestParam String token, @RequestParam String hotelId) {
         return service.removeHotel(token, hotelId);

@@ -333,4 +333,40 @@ public class CatalogService {
 
     }
 
+    @Transactional
+    public ResponseEntity<RoomDTO> findRoomByNumberAndHotelId(String hotelId, String number) {
+        int roomNumber = Integer.parseInt(doDecoding(number));
+        hotelId = doDecoding(hotelId);
+
+        Room room = catalogRepo.findRoomByHotelIdAndNumber(hotelId, roomNumber);
+
+        if (room == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+
+        List<RoomImage> images = catalogRepo.getRoomsImages(roomNumber);
+        List<ImageDTO> imageDTOs = new LinkedList<>();
+
+        if (!images.isEmpty()) {
+
+            for (RoomImage image : images) {
+                imageDTOs.add(
+                    new ImageDTO().setData(image.getData())
+                        .setName(image.getName()).setId(image.getId())
+                        .setType(image.getType())
+                );
+            }
+        
+        }
+
+        RoomDTO roomDTO = new RoomDTO().setAdultNo(room.getAdultNo())
+            .setBeds(room.getBeds()).setChildrenNo(room.getChildrenNo())
+            .setDescription(room.getDescription()).setHotelId(hotelId)
+            .setId(room.getId()).setImageDTOs(imageDTOs)
+            .setName(room.getName()).setPrice(room.getPrice()).setRoomNumber(roomNumber);
+
+        return ResponseEntity.status(HttpStatus.OK).body(roomDTO);
+        
+    }
+
 }

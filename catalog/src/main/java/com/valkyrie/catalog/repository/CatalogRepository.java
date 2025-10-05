@@ -71,4 +71,9 @@ public interface CatalogRepository extends JpaRepository<Hotel, String> {
     @Query(value = "select * from hotel where id = :id", nativeQuery = true)
     Hotel findHotelById(@Param("id") String id);
 
+    @Query(value = "select * from room where hotel_id = :hotelId and room_number = :roomNumber", nativeQuery = true)
+    Room findRoomByHotelIdAndNumber(@Param("hotelId") String hotelId, @Param("roomNumber") int roomNumber);
+
+    @Query(value = "select * from room_image where id = :roomId", nativeQuery = true)
+    List<RoomImage> findRoomImage(@Param("roomId") int roomId);
 }
