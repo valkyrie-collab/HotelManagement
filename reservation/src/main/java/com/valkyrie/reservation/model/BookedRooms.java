@@ -3,11 +3,13 @@ package com.valkyrie.reservation.model;
 public class BookedRooms {
     private int roomNumber;
     private String hotelId;
-    private boolean isBooked;
+    private boolean isBooked = false;
 
     public BookedRooms(int roomNumber, String hotelId) {
         this.roomNumber = roomNumber; this.hotelId = hotelId; this.isBooked = true;
     }
+
+    public BookedRooms() {}
 
     public int getRoomNumber() {return roomNumber;}
 
