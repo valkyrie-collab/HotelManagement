@@ -64,7 +64,7 @@ public class ReservationService {
 
         return reservationRepo.existsById(reservation.getReservationId())? 
             ResponseEntity.status(HttpStatus.ACCEPTED).body(
-                "The reservation is successfully of user " + username + " with reservation ID: " + reservation.getUserId()) :
+                "The reservation is successfully of user " + username + " with reservation ID: " + reservation.getReservationId()) :
             ResponseEntity.status(HttpStatus.BAD_REQUEST).body("The reservation is unsuccessful");
     }
 
