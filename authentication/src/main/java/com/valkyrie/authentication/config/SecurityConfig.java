@@ -34,7 +34,7 @@ public class SecurityConfig {
                             "/catalog/get-hotels", "/catalog/search-hotels"
                         ).permitAll()
                         .requestMatchers(
-                            "/user/sign-up", "/user/sign-in"
+                            "/user/**"
                         ).hasAnyRole("USER", "ADMIN")
                         .anyRequest().authenticated()
                     ).httpBasic(Customizer.withDefaults())
