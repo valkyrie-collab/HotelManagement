@@ -76,4 +76,24 @@ public interface CatalogRepository extends JpaRepository<Hotel, String> {
 
     @Query(value = "select * from room_image where id = :roomId", nativeQuery = true)
     List<RoomImage> findRoomImage(@Param("roomId") int roomId);
+
+    @Modifying
+    @Transactional
+    @Query(value = "update room set booked = :booked where room_number = :roomNumber and hotel_id = hotelId", nativeQuery = true)
+    int updateRoomStatus(@Param("booked") boolean booked, @Param("roomNumber") int roomNumber, @Param("hotelId") String hotelId);
+
+    @Modifying
+    @Transactional
+    @Query(value = "update room set booked = :booked where id = :roomId", nativeQuery = true)
+    int updateRoomStatusByRoomId(@Param("booked") boolean booked, @Param("roomId") String roomId);
+
+    @Query(value = "select case when exists (select 1 from room where booked = true and room_number = :roomNumber and hotel_id = :hotelId) then true else false end", nativeQuery = true)
+    boolean checkForBookedRoom(@Param("roomNumber") int roomNumber, @Param("hotelId") String hotelId);
+
+    @Query(value = "select * from room where hotel_id = :hotelId and booked = false", nativeQuery = true)
+    List<Room> getRoomsByUnbooked(@Param("hotelId") String hotelId);
+
+    @Query(value = "select * from room where hotel_id = :hotelId and booked = true", nativeQuery = true)
+    List<Room> getRoomsByBooked(@Param("hotelId") String hotelId);
+
 }

@@ -142,6 +142,120 @@ public class CatalogService {
     }
 
     @Transactional
+    public ResponseEntity<String> bookRoom(String roomNumber, String hotelId) {
+        roomNumber = doDecoding(roomNumber);
+        hotelId = doDecoding(hotelId);
+        boolean booked = catalogRepo.checkForBookedRoom(Integer.parseInt(roomNumber), hotelId);
+
+        if (booked) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Room already booked....");
+        }
+
+        int updateBookedRoom = catalogRepo.updateRoomStatus(true, Integer.parseInt(roomNumber), hotelId);
+
+        return updateBookedRoom > 0? ResponseEntity.status(HttpStatus.ACCEPTED).body("update successful.....") : 
+            ResponseEntity.status(HttpStatus.BAD_REQUEST).body("update was not successful check query....");
+
+    }
+
+    @Transactional
+    public ResponseEntity<String> unBookRoom(String roomNumber, String hotelId) {
+        roomNumber = doDecoding(roomNumber);
+        hotelId = doDecoding(hotelId);
+        boolean booked = catalogRepo.checkForBookedRoom(Integer.parseInt(roomNumber), hotelId);
+
+        if (!booked) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Room already unbooked....");
+        }
+
+        int updateBookedRoom = catalogRepo.updateRoomStatus(false, Integer.parseInt(roomNumber), hotelId);
+
+        return updateBookedRoom > 0? ResponseEntity.status(HttpStatus.ACCEPTED).body("update successful.....") : 
+            ResponseEntity.status(HttpStatus.BAD_REQUEST).body("update was not successful check query....");
+
+    }
+
+    public ResponseEntity<List<RoomDTO>> getRoomUnbookedData(String hotelId) {
+        // int roomNum = Integer.parseInt(doDecoding(roomNumber));
+        hotelId = doDecoding(hotelId);
+        List<Room> rooms = catalogRepo.getRoomsByUnbooked(hotelId);
+
+        if (rooms.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+
+        List<RoomDTO> roomDTOs = new LinkedList<>();
+
+        for (Room room : rooms) {
+            List<RoomImage> images = catalogRepo.getRoomsImages(room.getId());
+            List<ImageDTO> imageDTOs = new LinkedList<>(); 
+
+            if (!images.isEmpty()) {
+
+                for (RoomImage image : images) {
+                    imageDTOs.add(
+                        new ImageDTO().setData(image.getData())
+                            .setId(image.getId()).setName(image.getName())
+                            .setType(image.getType())
+                    );
+                }
+
+            }
+
+            roomDTOs.add(
+                new RoomDTO().setAdultNo(room.getAdultNo()).setBeds(room.getBeds())
+                    .setChildrenNo(room.getChildrenNo()).setDescription(room.getDescription())
+                    .setHotelId(hotelId).setId(room.getId()).setName(room.getName())
+                    .setPrice(room.getPrice()).setImageDTOs(imageDTOs).setRoomNumber(room.getRoomNumber())
+            );
+
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(roomDTOs);
+
+    }
+
+    public ResponseEntity<List<RoomDTO>> getRoomBookedData(String hotelId) {
+        // int roomNum = Integer.parseInt(doDecoding(roomNumber));
+        hotelId = doDecoding(hotelId);
+        List<Room> rooms = catalogRepo.getRoomsByBooked(hotelId);
+
+        if (rooms.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+
+        List<RoomDTO> roomDTOs = new LinkedList<>();
+
+        for (Room room : rooms) {
+            List<RoomImage> images = catalogRepo.getRoomsImages(room.getId());
+            List<ImageDTO> imageDTOs = new LinkedList<>(); 
+
+            if (!images.isEmpty()) {
+
+                for (RoomImage image : images) {
+                    imageDTOs.add(
+                        new ImageDTO().setData(image.getData())
+                            .setId(image.getId()).setName(image.getName())
+                            .setType(image.getType())
+                    );
+                }
+
+            }
+
+            roomDTOs.add(
+                new RoomDTO().setAdultNo(room.getAdultNo()).setBeds(room.getBeds())
+                    .setChildrenNo(room.getChildrenNo()).setDescription(room.getDescription())
+                    .setHotelId(hotelId).setId(room.getId()).setName(room.getName())
+                    .setPrice(room.getPrice()).setImageDTOs(imageDTOs).setRoomNumber(room.getRoomNumber())
+            );
+
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(roomDTOs);
+
+    }
+
+    @Transactional
     public ResponseEntity<List<RoomDTO>> getRoomsByHotelId(String hotelId) {
         hotelId = doDecoding(hotelId);
         List<Room> rooms = catalogRepo.getRoomsByHotelId(hotelId);

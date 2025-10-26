@@ -25,6 +25,7 @@ public class Room {
     private int childrenNo;
     private int price;
     private int beds;
+    private boolean booked;
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
     private List<RoomImage> images;
     @ManyToOne
@@ -38,6 +39,13 @@ public class Room {
         this.id = id;
         return this;
     }
+
+    public boolean isBooked() {return booked;}
+
+    public Room setBooked(boolean booked) {
+        this.booked = booked;
+        return this;
+    } 
 
     public int getRoomNumber() {
         return roomNumber;
