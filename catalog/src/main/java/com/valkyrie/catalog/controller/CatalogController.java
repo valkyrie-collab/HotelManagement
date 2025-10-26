@@ -42,7 +42,18 @@ public class CatalogController {
     public ResponseEntity<String> saveRating(@RequestParam String token, @RequestParam String hotelId, 
         @RequestParam String ratingJsonString) throws IOException {
             return service.saveRating(token, hotelId, ratingJsonString);
-        }
+    }
+    
+    @PostMapping("/book-room")
+    public ResponseEntity<String> bookRoom(@RequestParam String roomNumber, @RequestParam String hotelId) {
+        return service.bookRoom(roomNumber, hotelId);
+    }
+
+    @PostMapping("/unBook-room")
+    public ResponseEntity<String> unBookRoom(@RequestParam String roomNumber, @RequestParam String hotelId) {
+        return service.unBookRoom(roomNumber, hotelId);
+    }
+
     @GetMapping("/search-hotels")
     public ResponseEntity<List<HotelDTO>> findHotels(@RequestParam String name) {
         return service.getAllHotels(name);
@@ -64,6 +75,16 @@ public class CatalogController {
     @GetMapping("/find-room")
     public ResponseEntity<RoomDTO> getRoom(@RequestParam String hotelId, @RequestParam String roomNumber) {
         return service.findRoomByNumberAndHotelId(hotelId, roomNumber);
+    }
+
+    @GetMapping("/find-unBooked-rooms")
+    public ResponseEntity<List<RoomDTO>> getUnBookedRoom(@RequestParam String hotelId) {
+        return service.getRoomUnbookedData(hotelId);
+    }
+
+    @GetMapping("/find-booked-rooms")
+    public ResponseEntity<List<RoomDTO>> getBookRoom(@RequestParam String hotelId) {
+        return service.getRoomBookedData(hotelId);
     }
 
     @DeleteMapping("/remove-hotel")
