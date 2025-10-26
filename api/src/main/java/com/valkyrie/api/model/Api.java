@@ -33,6 +33,12 @@ public class Api {
                 get("catalog_get", "http://localhost:8082", "/catalog/**")
             ).and(
                 delete("catalog_delete", "http://localhost:8082", "/catalog/**")
+            ).and(
+                post("reservation_post", "http://localhost:8084", "/reservation/**")
+            ).and(
+                get("reservation_get", "http://localhost:8084", "/reservation/**")
+            ).and(
+                delete("reservation_delete", "http://localhost:8084", "/reservation/**")
             );
     }
 
