@@ -175,6 +175,7 @@ public class CatalogService {
 
     }
 
+    @Transactional
     public ResponseEntity<List<RoomDTO>> getRoomUnbookedData(String hotelId) {
         // int roomNum = Integer.parseInt(doDecoding(roomNumber));
         hotelId = doDecoding(hotelId);
@@ -205,7 +206,7 @@ public class CatalogService {
             roomDTOs.add(
                 new RoomDTO().setAdultNo(room.getAdultNo()).setBeds(room.getBeds())
                     .setChildrenNo(room.getChildrenNo()).setDescription(room.getDescription())
-                    .setHotelId(hotelId).setId(room.getId()).setName(room.getName())
+                    .setHotelId(hotelId).setId(room.getId()).setName(room.getName()).setBooked(room.isBooked())
                     .setPrice(room.getPrice()).setImageDTOs(imageDTOs).setRoomNumber(room.getRoomNumber())
             );
 
@@ -215,6 +216,7 @@ public class CatalogService {
 
     }
 
+    @Transactional
     public ResponseEntity<List<RoomDTO>> getRoomBookedData(String hotelId) {
         // int roomNum = Integer.parseInt(doDecoding(roomNumber));
         hotelId = doDecoding(hotelId);
@@ -245,7 +247,7 @@ public class CatalogService {
             roomDTOs.add(
                 new RoomDTO().setAdultNo(room.getAdultNo()).setBeds(room.getBeds())
                     .setChildrenNo(room.getChildrenNo()).setDescription(room.getDescription())
-                    .setHotelId(hotelId).setId(room.getId()).setName(room.getName())
+                    .setHotelId(hotelId).setId(room.getId()).setName(room.getName()).setBooked(room.isBooked())
                     .setPrice(room.getPrice()).setImageDTOs(imageDTOs).setRoomNumber(room.getRoomNumber())
             );
 
@@ -285,7 +287,7 @@ public class CatalogService {
             roomDTOs.add(
                 new RoomDTO().setAdultNo(room.getAdultNo()).setBeds(room.getBeds())
                     .setChildrenNo(room.getChildrenNo()).setDescription(room.getDescription())
-                    .setHotelId(hotelId).setId(room.getId()).setName(room.getName())
+                    .setHotelId(hotelId).setId(room.getId()).setName(room.getName()).setBooked(room.isBooked())
                     .setPrice(room.getPrice()).setImageDTOs(imageDTOs).setRoomNumber(room.getRoomNumber())
             );
 

@@ -79,7 +79,7 @@ public interface CatalogRepository extends JpaRepository<Hotel, String> {
 
     @Modifying
     @Transactional
-    @Query(value = "update room set booked = :booked where room_number = :roomNumber and hotel_id = hotelId", nativeQuery = true)
+    @Query(value = "update room set booked = :booked where room_number = :roomNumber and hotel_id = :hotelId", nativeQuery = true)
     int updateRoomStatus(@Param("booked") boolean booked, @Param("roomNumber") int roomNumber, @Param("hotelId") String hotelId);
 
     @Modifying

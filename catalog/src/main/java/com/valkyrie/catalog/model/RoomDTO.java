@@ -12,6 +12,7 @@ public class RoomDTO {
     private int childrenNo;
     private int price;
     private int Beds;
+    private boolean booked;
     private List<ImageDTO> imageDTOs;
 
     public List<ImageDTO> getImageDTOs() {return imageDTOs;}
@@ -26,6 +27,13 @@ public class RoomDTO {
     }
     public RoomDTO setId(int id) {
         this.id = id;
+        return this;
+    }
+
+    public boolean isBooked() {return booked;}
+
+    public RoomDTO setBooked(boolean booked) {
+        this.booked = booked;
         return this;
     }
 
