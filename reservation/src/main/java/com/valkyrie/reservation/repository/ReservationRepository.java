@@ -10,20 +10,32 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.valkyrie.reservation.model.BookedRooms;
+import com.valkyrie.reservation.model.UnBookedRooms;
 import com.valkyrie.reservation.model.Reservation;
+import com.valkyrie.reservation.model.Status;
+// import com.valkyrie.reservation.model.UnBookedRooms;
 
 @Repository
 public interface ReservationRepository extends JpaRepository<Reservation, String> {
 
-    @Query(value = "select 1 from reservation where reservation_id = :reservationId", nativeQuery = true)
-    Integer checkReservation(@Param("reservationId") String reservationId);
+    @Query(value = "select case when exists (select 1 from reservation where reservation_id = :reservationId) then true else false end", nativeQuery = true)
+    boolean checkReservation(@Param("reservationId") String reservationId);
 
     @Query(value = "select room_number, hotel_id from reservation where hotel_id = :hotelId", nativeQuery = true)
-    List<BookedRooms> findBookedRooms(@Param("hotelId") String hotelId);
+    List<UnBookedRooms> findBookedRooms(@Param("hotelId") String hotelId);
 
     @Query(value = "select * from reservation where user_id = :userId", nativeQuery = true)
     List<Reservation> findAllReservationWithUserId(@Param("userId") String userId);
+
+    @Modifying
+    @Transactional
+    @Query(value = "update reservation set status = :status where reservation_id = :reservationId", nativeQuery = true)
+    int updateStatus(@Param("status") Status status, @Param("reservationId") String reservationId);
+
+    @Modifying
+    @Transactional
+    @Query(value = "update reservation set canceled_at = :time where reservation_id = :reservationId", nativeQuery = true)
+    int updateCancelTime(@Param("time") Date time, @Param("reservationId") String reservationId);
 
     @Modifying
     @Transactional
@@ -34,4 +46,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, String
     @Transactional
     @Query(value = "update reservation set check_out = :checkOut where reservation_id = :reservationId", nativeQuery = true)
     int updateCheckOut(@Param("checkOut") Date checkOut, @Param("reservationId") String reservationId);
+
+    @Query(value = "select case when exists (select 1 from reservation where room_number = :roomNumber and hotel_id = :hotelId) then true else false end", nativeQuery = true)
+    boolean checkAlreadyReserved(@Param("roomNumber") int roomNumber, @Param("hotelId") String hotelId);
 }

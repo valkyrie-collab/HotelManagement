@@ -19,7 +19,7 @@ public class Reservation {
     private Date checkIn;
     private Date checkOut;
     private int night;
-    private final String[] occupancy = new String[2];
+    private String[] occupancy;
     private int perNightCost;
     private int totalAmount;
     private Status status;
@@ -87,8 +87,8 @@ public class Reservation {
     public String[] getOccupancy() {
         return occupancy;
     }
-    public Reservation setOccupancy(String value1, String value2) {
-        occupancy[0] = value1; occupancy[1] = value2;
+    public Reservation setOccupancy(String[] value) {
+        occupancy = value;
         return this;
     }
     

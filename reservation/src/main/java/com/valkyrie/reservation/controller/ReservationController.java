@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.valkyrie.reservation.model.BookedRooms;
+// import com.valkyrie.reservation.model.BookedRooms;
 import com.valkyrie.reservation.model.ReservationDTO;
 import com.valkyrie.reservation.model.RoomDTO;
 import com.valkyrie.reservation.service.ReservationService;
@@ -44,10 +44,10 @@ public class ReservationController {
         return service.setCheckOut(reservationId, username);
     }
 
-    @GetMapping("/all-room")
-    public ResponseEntity<List<BookedRooms>> rooms(String hotelId) {
-        return service.getRooms(hotelId);
-    }
+    // @GetMapping("/all-room")
+    // public ResponseEntity<List<BookedRooms>> rooms(String hotelId) {
+    //     return service.getRooms(hotelId);
+    // }
 
     @GetMapping("/get-all-room")
     public ResponseEntity<RoomDTO> roomData(String hotelId, String roomNumber) {

@@ -2,8 +2,8 @@ package com.valkyrie.reservation.service;
 
 import java.io.IOException;
 import java.util.Base64;
-import java.util.Collections;
-import java.util.Comparator;
+// import java.util.Collections;
+// import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.valkyrie.reservation.config.CatalogFeignController;
 import com.valkyrie.reservation.config.TokenConfig;
-import com.valkyrie.reservation.model.BookedRooms;
+// import com.valkyrie.reservation.model.UnBookedRooms;
 import com.valkyrie.reservation.model.Reservation;
 import com.valkyrie.reservation.model.ReservationDTO;
 import com.valkyrie.reservation.model.RoomDTO;
@@ -53,11 +53,16 @@ public class ReservationService {
         Reservation reservation = new ObjectMapper().readValue(doDecoding(reservationJsonString), Reservation.class);
         String username = config.getUsername(token);
         // boolean isAdmin = config.isAdmin(token);
+
+        if (reservationRepo.checkAlreadyReserved(Integer.parseInt(reservation.getRoomNumber()), reservation.getHotelId())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("the room is already booked please check properly");
+        }
+
         reservation.setReservationId(UUID.randomUUID().toString()).setUserId(username);
         reservation.setStatus(Status.CONFIRMED).setBookedAt(new Date());
         reservationRepo.save(reservation);
 
-        return reservationRepo.checkReservation(reservation.getReservationId()) == 1? 
+        return reservationRepo.existsById(reservation.getReservationId())? 
             ResponseEntity.status(HttpStatus.ACCEPTED).body(
                 "The reservation is successfully of user " + username + " with reservation ID: " + reservation.getUserId()) :
             ResponseEntity.status(HttpStatus.BAD_REQUEST).body("The reservation is unsuccessful");
@@ -65,74 +70,74 @@ public class ReservationService {
 
     public ResponseEntity<String> cancelReservation(String reservationId) {
         reservationId = doDecoding(reservationId);
-        Reservation reservation = reservationRepo.findById(reservationId).orElse(null);
+        boolean reservation = reservationRepo.existsById(reservationId);
 
-        if (reservation == null) {
+        if (!reservation) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("There is no such reservation");
         }
 
-        reservation.setStatus(Status.CANCELLED);
-        reservation.setCanceledAt(new Date(System.currentTimeMillis()));
-        reservationRepo.save(reservation);
+        int cancelCount = reservationRepo.updateStatus(Status.CANCELLED, reservationId);
+        int cancelDate = reservationRepo.updateCancelTime(new Date(), reservationId);
 
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body("canceled reservation....");
-
-    }
-
-    public ResponseEntity<List<BookedRooms>> getRooms(String hotelId) {
-        List<BookedRooms> bookedRooms = reservationRepo.findBookedRooms(doDecoding(hotelId));
-        ResponseEntity<List<RoomDTO>> rooms = feign.getRooms(hotelId);
-
-        if (rooms == null || !rooms.getStatusCode().equals(HttpStatusCode.valueOf(200))) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
-
-        if (bookedRooms.isEmpty()) {return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);}
-
-        List<RoomDTO> roomDTOs = rooms.getBody();
-
-        if (roomDTOs == null || roomDTOs.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
-
-        Collections.sort(
-            bookedRooms, new Comparator<BookedRooms>() {
-                @Override
-                public int compare(BookedRooms roomOne, BookedRooms roomTwo) {
-                    Integer a = roomOne.getRoomNumber();
-                    Integer b = roomTwo.getRoomNumber();
-                    return a.compareTo(b);
-                }
-            }
-        );
-
-        Collections.sort(
-            roomDTOs, new Comparator<RoomDTO>() {
-                @Override
-                public int compare(RoomDTO roomDTOOne, RoomDTO roomDTOTwo) {
-                    Integer a = roomDTOOne.getRoomNumber();
-                    Integer b = roomDTOTwo.getRoomNumber();
-                    return a.compareTo(b);
-                }
-            }
-        );
-        
-        int i = 0; int j = 0;
-        while (i < roomDTOs.size() && j < bookedRooms.size()) {
-            RoomDTO roomDTO = roomDTOs.get(i++);
-            BookedRooms bookedRoom = bookedRooms.get(j);
-
-            if (roomDTO.getRoomNumber() == bookedRoom.getRoomNumber()){j++;}
-            else {
-                bookedRooms.add(new BookedRooms().setRoomNumber(
-                    roomDTO.getRoomNumber()).setHotelId(hotelId));
-            }
-
-        } 
-        
-        return ResponseEntity.status(HttpStatus.OK).body(bookedRooms);
+        return cancelCount + cancelDate >= 2? ResponseEntity.status(HttpStatus.ACCEPTED).body("canceled reservation....") : 
+            ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Internal server error occured...");
 
     }
+
+    // public ResponseEntity<List<BookedRooms>> getRooms(String hotelId) {
+    //     List<BookedRooms> bookedRooms = reservationRepo.findBookedRooms(doDecoding(hotelId));
+    //     ResponseEntity<List<RoomDTO>> rooms = feign.getRooms(hotelId);
+
+    //     if (rooms == null || !rooms.getStatusCode().equals(HttpStatusCode.valueOf(200))) {
+    //         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+    //     }
+
+    //     if (bookedRooms.isEmpty()) {return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);}
+
+    //     List<RoomDTO> roomDTOs = rooms.getBody();
+
+    //     if (roomDTOs == null || roomDTOs.isEmpty()) {
+    //         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+    //     }
+
+    //     Collections.sort(
+    //         bookedRooms, new Comparator<BookedRooms>() {
+    //             @Override
+    //             public int compare(BookedRooms roomOne, BookedRooms roomTwo) {
+    //                 Integer a = roomOne.getRoomNumber();
+    //                 Integer b = roomTwo.getRoomNumber();
+    //                 return a.compareTo(b);
+    //             }
+    //         }
+    //     );
+
+    //     Collections.sort(
+    //         roomDTOs, new Comparator<RoomDTO>() {
+    //             @Override
+    //             public int compare(RoomDTO roomDTOOne, RoomDTO roomDTOTwo) {
+    //                 Integer a = roomDTOOne.getRoomNumber();
+    //                 Integer b = roomDTOTwo.getRoomNumber();
+    //                 return a.compareTo(b);
+    //             }
+    //         }
+    //     );
+        
+    //     int i = 0; int j = 0;
+    //     while (i < roomDTOs.size() && j < bookedRooms.size()) {
+    //         RoomDTO roomDTO = roomDTOs.get(i++);
+    //         BookedRooms bookedRoom = bookedRooms.get(j);
+
+    //         if (roomDTO.getRoomNumber() == bookedRoom.getRoomNumber()){j++;}
+    //         else {
+    //             bookedRooms.add(new BookedRooms().setRoomNumber(
+    //                 roomDTO.getRoomNumber()).setHotelId(hotelId));
+    //         }
+
+    //     } 
+        
+    //     return ResponseEntity.status(HttpStatus.OK).body(bookedRooms);
+
+    // }
 
     public ResponseEntity<RoomDTO> getRoomData(String hotelId, String roomNumber) {
         ResponseEntity<RoomDTO> response = feign.getRoom(hotelId, roomNumber);
@@ -170,9 +175,9 @@ public class ReservationService {
     public ResponseEntity<String> setCheckIn(String reservationId, String username) {
         reservationId = doDecoding(reservationId);
         username = doDecoding(username);
-        Integer presentReservation = reservationRepo.checkReservation(reservationId);
+        boolean presentReservation = reservationRepo.checkReservation(reservationId);
 
-        if (presentReservation != 1) {
+        if (presentReservation) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No reservation found");
         }
 
@@ -189,9 +194,9 @@ public class ReservationService {
         username = doDecoding(username);
         reservationId = doDecoding(reservationId);
         username = doDecoding(username);
-        Integer presentReservation = reservationRepo.checkReservation(reservationId);
+        boolean presentReservation = reservationRepo.checkReservation(reservationId);
 
-        if (presentReservation != 1) {
+        if (presentReservation) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No reservation found");
         }
 
@@ -205,15 +210,15 @@ public class ReservationService {
     @Transactional
     public ResponseEntity<String> deleteReservation(String reservationId) {
         reservationId = doDecoding(reservationId);
+        boolean reservation = reservationRepo.checkReservation(reservationId);
 
-        if (reservationRepo.checkReservation(reservationId) != 1) {
+        if (!reservation) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Already been deleted....");
         }
 
         reservationRepo.deleteById(reservationId);
         
-        return reservationRepo.checkReservation(reservationId) != 1? 
-            ResponseEntity.status(HttpStatus.OK).body("removed reservation") : 
+        return reservation? ResponseEntity.status(HttpStatus.OK).body("removed reservation") : 
             ResponseEntity.status(HttpStatus.BAD_REQUEST).body("deletion is unsuccessful....");
     }
 
