@@ -49,13 +49,21 @@ public class ReservationService {
         return new String(Base64.getDecoder().decode(word));
     }
 
+    private String doEncoding(String word) {
+        return Base64.getEncoder().encodeToString(word.getBytes());
+    }
+
     public ResponseEntity<String> saveReservation(String token, String reservationJsonString) throws IOException {
         Reservation reservation = new ObjectMapper().readValue(doDecoding(reservationJsonString), Reservation.class);
         String username = config.getUsername(token);
         // boolean isAdmin = config.isAdmin(token);
 
-        if (reservationRepo.checkAlreadyReserved(Integer.parseInt(reservation.getRoomNumber()), reservation.getHotelId())) {
+        if (reservationRepo.checkAlreadyReserved(reservation.getRoomNumber(), reservation.getHotelId())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("the room is already booked please check properly");
+        }
+
+        if (!feign.bookRoom(doEncoding(reservation.getRoomNumber()), doEncoding(reservation.getHotelId())).getStatusCode().equals(HttpStatusCode.valueOf(202))) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("some problem happened in the room service database");
         }
 
         reservation.setReservationId(UUID.randomUUID().toString()).setUserId(username);
@@ -76,7 +84,14 @@ public class ReservationService {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("There is no such reservation");
         }
 
-        int cancelCount = reservationRepo.updateStatus(Status.CANCELLED, reservationId);
+        String roomNumber = reservationRepo.getRoomNumber(reservationId);
+        String hotelId = reservationRepo.getRoomHotelId(reservationId);
+
+        if (!feign.unBookRoom(doEncoding(roomNumber), doEncoding(hotelId)).getStatusCode().equals(HttpStatusCode.valueOf(202))) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("some problem happened in the room service database");
+        }
+
+        int cancelCount = reservationRepo.updateStatus(Status.CANCELLED.name(), reservationId);
         int cancelDate = reservationRepo.updateCancelTime(new Date(), reservationId);
 
         return cancelCount + cancelDate >= 2? ResponseEntity.status(HttpStatus.ACCEPTED).body("canceled reservation....") : 
@@ -139,15 +154,15 @@ public class ReservationService {
 
     // }
 
-    public ResponseEntity<RoomDTO> getRoomData(String hotelId, String roomNumber) {
-        ResponseEntity<RoomDTO> response = feign.getRoom(hotelId, roomNumber);
+    // public ResponseEntity<RoomDTO> getRoomData(String hotelId, String roomNumber) {
+    //     ResponseEntity<RoomDTO> response = feign.getRoom(hotelId, roomNumber);
 
-        if (response == null || !response.getStatusCode().equals(HttpStatusCode.valueOf(200))) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
+    //     if (response == null || !response.getStatusCode().equals(HttpStatusCode.valueOf(200))) {
+    //         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+    //     }
 
-        return ResponseEntity.status(HttpStatus.OK).body(response.getBody());
-    }
+    //     return ResponseEntity.status(HttpStatus.OK).body(response.getBody());
+    // }
 
     public ResponseEntity<List<ReservationDTO>> findAllReservationWithUserId(String token) {
         String username = config.getUsername(token);
@@ -172,16 +187,19 @@ public class ReservationService {
     }
 
     @Transactional
-    public ResponseEntity<String> setCheckIn(String reservationId, String username) {
+    public ResponseEntity<String> setCheckIn(String reservationId) {
         reservationId = doDecoding(reservationId);
-        username = doDecoding(username);
+        System.out.println(reservationId);
+        // username = doDecoding(username);
         boolean presentReservation = reservationRepo.checkReservation(reservationId);
+        Status status = reservationRepo.getReservationStatus(reservationId);
 
-        if (presentReservation) {
+        if (!presentReservation || status.equals(Status.CANCELLED)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No reservation found");
         }
 
         int affectedRows = reservationRepo.updateCheckIn(new Date(System.currentTimeMillis()), reservationId);
+        String username = reservationRepo.getUsername(reservationId);
 
         return (affectedRows > 0)? ResponseEntity.status(HttpStatus.ACCEPTED).body("Check In success " + username) : 
             ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Check In not updated...");
@@ -189,36 +207,37 @@ public class ReservationService {
     }
 
     @Transactional
-    public ResponseEntity<String> setCheckOut(String reservationId, String username) {
+    public ResponseEntity<String> setCheckOut(String reservationId) {
         reservationId = doDecoding(reservationId);
-        username = doDecoding(username);
-        reservationId = doDecoding(reservationId);
-        username = doDecoding(username);
+        String username = reservationRepo.getUsername(reservationId);
         boolean presentReservation = reservationRepo.checkReservation(reservationId);
+        Status status = reservationRepo.getReservationStatus(reservationId);
 
-        if (presentReservation) {
+        if (!presentReservation || status.equals(Status.CANCELLED)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No reservation found");
         }
 
         int affectedRows = reservationRepo.updateCheckOut(new Date(System.currentTimeMillis()), reservationId);
 
-        return (affectedRows > 0)? ResponseEntity.status(HttpStatus.ACCEPTED).body("Check In success " + username) : 
-            ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Check In not updated...");
+        return (affectedRows > 0)? ResponseEntity.status(HttpStatus.ACCEPTED).body("Check out success " + username) : 
+            ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Check out not updated...");
         
     }
 
     @Transactional
-    public ResponseEntity<String> deleteReservation(String reservationId) {
-        reservationId = doDecoding(reservationId);
-        boolean reservation = reservationRepo.checkReservation(reservationId);
+    public ResponseEntity<String> deleteReservation(String token) {
+        String username = config.getUsername(token);
+        boolean reservation = reservationRepo.checkReservationWithUsername(username);
 
         if (!reservation) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Already been deleted....");
         }
 
-        reservationRepo.deleteById(reservationId);
+        reservationRepo.deleteAllByUserId(username);
+
+        reservation = reservationRepo.checkReservationWithUsername(username);
         
-        return reservation? ResponseEntity.status(HttpStatus.OK).body("removed reservation") : 
+        return !reservation? ResponseEntity.status(HttpStatus.OK).body("removed reservation") : 
             ResponseEntity.status(HttpStatus.BAD_REQUEST).body("deletion is unsuccessful....");
     }
 

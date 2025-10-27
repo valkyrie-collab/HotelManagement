@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,13 +36,13 @@ public class ReservationController {
     }
 
     @PostMapping("/update-check-in")
-    public ResponseEntity<String> checkIn(String reservationId, String username) {
-        return service.setCheckIn(reservationId, username);
+    public ResponseEntity<String> checkIn(String reservationId) {
+        return service.setCheckIn(reservationId);
     }
 
     @PostMapping("/update-check-out")
-    public ResponseEntity<String> checkOut(String reservationId, String username) {
-        return service.setCheckOut(reservationId, username);
+    public ResponseEntity<String> checkOut(String reservationId) {
+        return service.setCheckOut(reservationId);
     }
 
     // @GetMapping("/all-room")
@@ -49,18 +50,18 @@ public class ReservationController {
     //     return service.getRooms(hotelId);
     // }
 
-    @GetMapping("/get-all-room")
-    public ResponseEntity<RoomDTO> roomData(String hotelId, String roomNumber) {
-        return service.getRoomData(hotelId, roomNumber);
-    }
+    // @GetMapping("/get-all-room")
+    // public ResponseEntity<RoomDTO> roomData(String hotelId, String roomNumber) {
+    //     return service.getRoomData(hotelId, roomNumber);
+    // }
 
     @GetMapping("/get-all-user-reservation")
     public ResponseEntity<List<ReservationDTO>> userReservation(String token) {
         return service.findAllReservationWithUserId(token);
     }
 
-    @GetMapping("delete-reservation")
-    public ResponseEntity<String> remove(String reservationId) {
-        return service.deleteReservation(reservationId);
+    @DeleteMapping("/delete-reservation")
+    public ResponseEntity<String> remove(String token) {
+        return service.deleteReservation(token);
     }
 }

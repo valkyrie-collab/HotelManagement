@@ -21,6 +21,9 @@ public interface ReservationRepository extends JpaRepository<Reservation, String
     @Query(value = "select case when exists (select 1 from reservation where reservation_id = :reservationId) then true else false end", nativeQuery = true)
     boolean checkReservation(@Param("reservationId") String reservationId);
 
+    @Query(value = "select case when exists (select 1 from reservation where user_id = :username) then true else false end", nativeQuery = true)
+    boolean checkReservationWithUsername(@Param("username") String username);
+
     @Query(value = "select room_number, hotel_id from reservation where hotel_id = :hotelId", nativeQuery = true)
     List<UnBookedRooms> findBookedRooms(@Param("hotelId") String hotelId);
 
@@ -30,7 +33,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, String
     @Modifying
     @Transactional
     @Query(value = "update reservation set status = :status where reservation_id = :reservationId", nativeQuery = true)
-    int updateStatus(@Param("status") Status status, @Param("reservationId") String reservationId);
+    int updateStatus(@Param("status") String status, @Param("reservationId") String reservationId);
 
     @Modifying
     @Transactional
@@ -48,5 +51,20 @@ public interface ReservationRepository extends JpaRepository<Reservation, String
     int updateCheckOut(@Param("checkOut") Date checkOut, @Param("reservationId") String reservationId);
 
     @Query(value = "select case when exists (select 1 from reservation where room_number = :roomNumber and hotel_id = :hotelId) then true else false end", nativeQuery = true)
-    boolean checkAlreadyReserved(@Param("roomNumber") int roomNumber, @Param("hotelId") String hotelId);
+    boolean checkAlreadyReserved(@Param("roomNumber") String roomNumber, @Param("hotelId") String hotelId);
+
+    @Query(value = "select room_number from reservation where reservation_id = :reservationId", nativeQuery = true)
+    String getRoomNumber(@Param("reservationId") String reservationId);
+
+    @Query(value = "select hotel_id from reservation where reservation_id = :reservationId", nativeQuery = true)
+    String getRoomHotelId(@Param("reservationId") String reservationId);
+
+    @Query(value = "select user_id from reservation where reservation_id = :reservationId", nativeQuery = true)
+    String getUsername(@Param("reservationId") String reservationId);
+
+    @Query(value = "select status from reservation where reservation_id = :reservationId", nativeQuery = true)
+    Status getReservationStatus(@Param("reservationId") String reservationId);
+
+    @Transactional
+    void deleteAllByUserId(String userId);
 }

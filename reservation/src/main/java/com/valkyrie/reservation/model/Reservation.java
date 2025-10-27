@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.Date;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
@@ -22,6 +24,7 @@ public class Reservation {
     private String[] occupancy;
     private int perNightCost;
     private int totalAmount;
+    @Enumerated(EnumType.STRING)
     private Status status;
     private Date bookedAt;
     private Date modifiedAt;

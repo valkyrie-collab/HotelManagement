@@ -13,5 +13,6 @@ TRUNCATE TABLE room CASCADE;
 TRUNCATE TABLE room_image;
 
 UPDATE room SET room_number = 102 WHERE id = 2;
+UPDATE room SET booked = TRUE where id = 2;
 
 -- DELETE FROM room WHERE room_number = 209 AND hotel_id = 'ght-ieib';
