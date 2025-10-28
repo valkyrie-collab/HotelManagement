@@ -45,6 +45,17 @@
             "database": "authentication",
             "username": "postgres",
             "password": "postgres30082004"
+        },
+        {
+            "ssh": "Disabled",
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "EntityDatabase",
+            "database": "entities",
+            "username": "postgres",
+            "password": "postgres30082004"
         }
     ]
 }

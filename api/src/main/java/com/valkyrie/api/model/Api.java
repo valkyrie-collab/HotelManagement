@@ -39,6 +39,12 @@ public class Api {
                 get("reservation_get", "http://localhost:8084", "/reservation/**")
             ).and(
                 delete("reservation_delete", "http://localhost:8084", "/reservation/**")
+            ).and(
+                post("entity_post", "http://localhost:8083", "/entity/**")
+            ).and(
+                get("entity_get", "http://localhost:8083", "/entity/**")
+            ).and(
+                delete("entity_delete", "http://localhost:8082", "/entity/**")
             );
     }
 
