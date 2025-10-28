@@ -1,10 +1,10 @@
-package com.valkyrie.rating;
+package com.valkyrie.entity;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class RatingApplicationTests {
+class EntityApplicationTests {
 
 	@Test
 	void contextLoads() {
