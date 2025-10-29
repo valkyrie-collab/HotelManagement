@@ -28,8 +28,8 @@ public class EntityController {
     }
 
     @PostMapping("/add-entity")
-    public ResponseEntity<String> addEntity(@RequestParam String token) {
-        return service.addEntity(token);
+    public ResponseEntity<String> addEntity(@RequestParam String username) {
+        return service.addEntity(username);
     }
 
     @PostMapping("/update-entity")

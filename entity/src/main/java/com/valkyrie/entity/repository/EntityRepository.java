@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.valkyrie.entity.model.BasicDetails;
 import com.valkyrie.entity.model.Entities;
+import com.valkyrie.entity.model.Image;
 
 @Repository
 public interface EntityRepository extends JpaRepository<Entities, String> {
@@ -18,5 +19,8 @@ public interface EntityRepository extends JpaRepository<Entities, String> {
 
     @Query(value = "select id, first_name, last_name, address, email, phone_number from entities", nativeQuery = true)
     List<BasicDetails> getEntityBasicDetails();
+
+    @Query(value = "select * from image where entity_id = :userId", nativeQuery = true)
+    Image getProfileImage(@Param("userId") String userId);
 
 }

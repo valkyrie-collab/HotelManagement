@@ -1,5 +1,7 @@
 package com.valkyrie.authentication.service;
 
+import java.util.Base64;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.valkyrie.authentication.config.EntityFeignController;
 import com.valkyrie.authentication.config.TokenConfig;
 import com.valkyrie.authentication.model.User;
 import com.valkyrie.authentication.repository.UserRepository;
@@ -27,6 +30,10 @@ public class UserService {
         this.authenticationManager = authenticationManager;
     }
 
+    private EntityFeignController feign;
+    @Autowired
+    private void setFeign(EntityFeignController feign) {this.feign = feign;}
+
     private TokenConfig config;
     @Autowired
     private void setConfig(TokenConfig config) {this.config = config;}
@@ -42,6 +49,7 @@ public class UserService {
         );
 
         userRepo.save(user);
+        feign.addEntity(Base64.getEncoder().encodeToString(user.getUsername().getBytes()));
 
         return userRepo.findById(user.getUsername()).orElse(null) == null? 
             ResponseEntity.status(HttpStatus.BAD_REQUEST).body("user not saved...") : 

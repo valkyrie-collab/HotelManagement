@@ -9,9 +9,9 @@ public class BasicDetails {
     private long phoneNumber;
     private ImageDTO profileImage;
 
-    public BasicDetails(String firstName, String lastName, String address, String email, long phoneNumber) {
+    public BasicDetails(String id, String firstName, String lastName, String address, String email, long phoneNumber) {
         this.firstName = firstName; this.lastName = lastName; this.address = address;
-        this.email = email; this.phoneNumber = phoneNumber;
+        this.email = email; this.phoneNumber = phoneNumber; this.id = id;
     }
 
     public BasicDetails() {}

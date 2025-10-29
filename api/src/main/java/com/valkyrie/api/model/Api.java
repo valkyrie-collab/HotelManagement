@@ -44,7 +44,7 @@ public class Api {
             ).and(
                 get("entity_get", "http://localhost:8083", "/entity/**")
             ).and(
-                delete("entity_delete", "http://localhost:8082", "/entity/**")
+                delete("entity_delete", "http://localhost:8083", "/entity/**")
             );
     }
 

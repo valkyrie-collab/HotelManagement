@@ -45,8 +45,8 @@ public class EntityService {
     private String doDecoding(String word) {return new String(Base64.getDecoder().decode(word));}
 
     @Transactional
-    public ResponseEntity<String> addEntity(String token) {
-        String username = config.getUsername(token);
+    public ResponseEntity<String> addEntity(String username) {
+        username = doDecoding(username);
         boolean exist = entityRepo.checkEntityPresent(username);
 
         if (exist) {
@@ -116,6 +116,19 @@ public class EntityService {
         }
 
         List<BasicDetails> basicDetails = entityRepo.getEntityBasicDetails();
+
+        for (BasicDetails basicDetail : basicDetails) {
+            Image profileImage = entityRepo.getProfileImage(basicDetail.getId());
+            ImageDTO profile = null;
+
+            if (profileImage != null) {
+                profile = new ImageDTO().setData(profileImage.getData()).setId(profileImage.getId())
+                    .setName(profileImage.getName()).setType(profileImage.getType());
+            }
+
+            basicDetail.setProfileImage(profile);
+
+        }
 
         return basicDetails.isEmpty()? ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null) : 
             ResponseEntity.status(HttpStatus.OK).body(basicDetails);
