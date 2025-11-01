@@ -33,7 +33,7 @@ public class EntityController {
     }
 
     @PostMapping("/update-entity")
-    public ResponseEntity<String> updateEntity(@RequestParam String token, @RequestParam String EntityJsonString, @RequestPart MultipartFile profileImage) throws IOException {
+    public ResponseEntity<String> updateEntity(@RequestParam String token, @RequestParam String EntityJsonString, @RequestPart(required = false) MultipartFile profileImage) throws IOException {
         return service.updateEntity(token, EntityJsonString, profileImage);
     }
 

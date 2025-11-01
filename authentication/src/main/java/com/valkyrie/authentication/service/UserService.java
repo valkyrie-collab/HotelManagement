@@ -16,6 +16,8 @@ import com.valkyrie.authentication.config.TokenConfig;
 import com.valkyrie.authentication.model.User;
 import com.valkyrie.authentication.repository.UserRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class UserService {
     private UserRepository userRepo;
@@ -38,9 +40,9 @@ public class UserService {
     @Autowired
     private void setConfig(TokenConfig config) {this.config = config;}
 
-    public ResponseEntity<String> signUp(User user) {
+    public ResponseEntity<String> signUp(User user, boolean passwordChange) {
 
-        if (userRepo.findById(user.getUsername()).orElse(null) != null) {
+        if (userRepo.findById(user.getUsername()).orElse(null) != null && !passwordChange) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("user already present...");
         }
 
@@ -49,7 +51,11 @@ public class UserService {
         );
 
         userRepo.save(user);
-        feign.addEntity(Base64.getEncoder().encodeToString(user.getUsername().getBytes()));
+        System.out.println("working");
+        
+        if (!passwordChange) {
+            feign.addEntity(Base64.getEncoder().encodeToString(user.getUsername().getBytes()));
+        }
 
         return userRepo.findById(user.getUsername()).orElse(null) == null? 
             ResponseEntity.status(HttpStatus.BAD_REQUEST).body("user not saved...") : 
@@ -78,6 +84,21 @@ public class UserService {
         return user != null? 
             ResponseEntity.status(HttpStatus.OK).body(user) : 
             ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+    }
+
+    @Transactional
+    public ResponseEntity<String> removeUser(String token) {
+        String username = config.getUsername(token);
+
+        if (!userRepo.existsById(username)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("user already been removed...");
+        }
+
+        userRepo.deleteById(username);
+
+        return userRepo.existsById(username)? ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Account not deleted") : 
+            ResponseEntity.status(HttpStatus.OK).body("Account has been deleted successfully....");
+
     }
 
 }

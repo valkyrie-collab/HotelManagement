@@ -2,6 +2,7 @@ package com.valkyrie.authentication.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,11 +23,16 @@ public class UserController {
     }
 
     @PostMapping("/sign-up")
-    public ResponseEntity<String> signUp(@RequestBody User user) {return userService.signUp(user);}
+    public ResponseEntity<String> signUp(@RequestBody User user, @RequestParam(required = false) Boolean passwordChange) {
+        return userService.signUp(user, passwordChange == null? false : passwordChange);
+    }
 
     @PostMapping("/sign-in")
     public ResponseEntity<String> signIn(@RequestBody User user) {return userService.signIn(user);}
 
     @GetMapping("/get-user")
     public ResponseEntity<User> getUser(@RequestParam String username) {return userService.getUser(username);}
+
+    @DeleteMapping("/remove-user")
+    public ResponseEntity<String> removeUser(@RequestParam String token) {return userService.removeUser(token);}
 }

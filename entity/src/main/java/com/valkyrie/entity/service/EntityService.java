@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.valkyrie.entity.config.TokenConfig;
+import com.valkyrie.entity.config.UserFeignController;
 import com.valkyrie.entity.model.BasicDetails;
 import com.valkyrie.entity.model.Entities;
 import com.valkyrie.entity.model.EntityDTO;
@@ -34,6 +35,12 @@ public class EntityService {
     @Autowired
     private void setConfig(TokenConfig config) {
         this.config = config;
+    }
+
+    private UserFeignController feign;
+    @Autowired
+    private void setFeign(UserFeignController feign) {
+        this.feign = feign;
     }
 
     // private ImageRepository imageRepo;
@@ -71,12 +78,16 @@ public class EntityService {
         }
 
         Entities entity = new ObjectMapper().readValue(doDecoding(EntityJsonString), Entities.class);
-        entity.setId(username);
-        Image image = new Image().setData(profileImage.getBytes()).setType(profileImage.getContentType())
-            .setName(profileImage.getOriginalFilename()).setEntity(entity);
-        entity.setProfileImage(image);
-        entityRepo.save(entity);
+        entity.setId(username); Image image = null;
 
+        if (profileImage != null) {
+            image = new Image().setData(profileImage.getBytes()).setType(profileImage.getContentType())
+                .setName(profileImage.getOriginalFilename()).setEntity(entity);
+        } else {
+            image = entityRepo.getProfileImage(username);
+        }
+            entity.setProfileImage(image);
+            entityRepo.save(entity);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body("profile updated successfully.....");
 
     }
@@ -156,6 +167,7 @@ public class EntityService {
         }
 
         entityRepo.deleteById(username);
+        feign.removeUser(token);
 
         return entityRepo.checkEntityPresent(username)? ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Deletion is not successful....") : 
             ResponseEntity.status(HttpStatus.OK).body("Deletion successful.........");

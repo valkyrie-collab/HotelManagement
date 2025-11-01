@@ -110,7 +110,7 @@ public class CatalogService {
             );
         }
 
-        room.setHotel(hotel).setImages(images);
+        room.setHotel(hotel).setImages(images).setBooked(false);
         roomRepo.save(room);
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).body("Room add successfully to the hotel with id: " + hotelId);
